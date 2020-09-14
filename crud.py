@@ -1,19 +1,47 @@
+from typing import Union
+import enum
+
 from sqlalchemy.orm import Session
 
-import models
+from models import Recipe
 import schemas
 
 
+class FoodTypeEnum(enum.Enum):
+    appetizer = "appetizer"
+    first_course = "first_course"
+    main_course = "main_course"
+    dessert = "dessert"
+    other = "other"
+
+
 def get_recipe_by_name(db: Session, name: str):
-    return db.query(models.Recipe).filter(models.Recipe.name == name).first()
+    return db.query(Recipe).filter(Recipe.name == name).first()
 
 
 def get_recipes(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Recipe).offset(skip).limit(limit).all()
+    return db.query(Recipe).offset(skip).limit(limit).all()
 
+
+def get_user_favourite_recipes(db: Session, name: str):
+    return db.query(Recipe)\
+        .filter(Recipe.reviews.taster.name == name)\
+        .order_by(Recipe.reviews.rating)
+
+
+def get_random_recipe(db: Session, foodtype: FoodTypeEnum, already_cooked: bool = False):
+    return db.query(Recipe) \
+        .filter(Recipe.foodtype == foodtype.value, Recipe.already_cooked == already_cooked)\
+        .one()
+
+
+def get_recipes_by_ingredients(db: Session, foodtype: FoodTypeEnum, ingredients: Union[str, list]):
+    return db.query(Recipe) \
+        .filter(Recipe.foodtype == foodtype.value)\
+        .all()
 
 def create_recipe(db: Session, recipe: schemas.RecipeCreate):
-    new_recipe = models.Recipe(
+    new_recipe = Recipe(
         name=recipe.name,
         foodtype=recipe.foodtype,
         ingredients=recipe.ingredients,
