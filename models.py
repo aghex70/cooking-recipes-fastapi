@@ -28,6 +28,7 @@ class Taster(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     review = relationship("Review", back_populates="tasters")
+    alias = Column(String, unique=True, index=True)
 
     couple = relationship(
         'Taster',
