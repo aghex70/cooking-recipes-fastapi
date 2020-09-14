@@ -27,7 +27,7 @@ class Taster(Base):
     taster_id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
-    review = relationship("Review", back_populates="tasters")
+    review = relationship("Review", back_populates="tasters", nullable=True)
     alias = Column(String, unique=True, index=True)
 
     couple = relationship(
@@ -35,7 +35,7 @@ class Taster(Base):
         secondary=couple_couple,
         primaryjoin=taster_id == couple_couple.c.first_taster_id,
         secondaryjoin=taster_id == couple_couple.c.second_taster_id,
-        backref=backref('couples')
+        backref=backref('couples'), nullable=True
     )
 
 
@@ -51,7 +51,7 @@ class Recipe(Base):
     created_date = Column(Date, default=datetime.today())
     thermomix_recipe = Column(Boolean, default=True)
     is_vegetarian = Column(Boolean, nullable=True)
-    reviews = relationship("Review")
+    reviews = relationship("Review", nullable=True)
 
 
 class Review(Base):
@@ -59,8 +59,8 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     observations = deferred(Column(Text, nullable=True))
-    rating = Column(Integer, nullable=True)
-    cooked_date = Column(Date, nullable=True)
-    images = Column(ARRAY(String))
+    rating = Column(Integer)
+    cooked_date = Column(Date)
+    images = Column(ARRAY(String), nullable=True)
     recipe_id = Column(Integer, ForeignKey('recipes.id'))
-    taster = relationship("Taster", uselist=False, back_populates="reviews")
+    taster = relationship("Taster", uselist=False, back_populates="reviews", nullable=True)
