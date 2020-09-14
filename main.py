@@ -181,35 +181,3 @@ app.include_router(recipes.router)
 #
 # In that case, the URL would be: /files//home/johndoe/myfile.txt, with a double slash (//) between files and home.
 # """
-
-
-parent_child = Table(
-    'PersonChild',
-    Base.metadata,
-    Column('ParentChildId', INTEGER, primary_key=True),
-    Column('ParentId', INTEGER, ForeignKey('Person.PersonId'),
-           Column('ChildId', INTEGER, ForeignKey('Person.PersonId')
-                  )
-
-couple_couple = Table('CoupleTaster', Base.metadata,
-        Column('CoupleId', INTEGER, primary_key=True),
-        Column('TasterA', INTEGER, ForeignKey('Taster.TasterId'),
-        Column('TasterB', INTEGER, ForeignKey('Taster.TasterId')
-                  )
-
-class Person(Base):
-    __tablename__ = 'Person'
-
-    person_id = Column('PersonId', INTEGER, primary_key=True)
-    person_type = Column('PersonType', VARCHAR)
-    name = Column('Name', VARCHAR)
-
-    parents = relationship(
-        'Person',
-        secondary=parent_child,
-        primaryjoin=person_id == parent_child.c.ChildId,
-        secondaryjoin=person_id == parent_child.c.ParentId
-    backref = backref('children')
-    )
-
-
