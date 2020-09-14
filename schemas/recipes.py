@@ -18,18 +18,19 @@ class RecipeBase(BaseModel):
     directions: str
 
 
-class RecipeCreate(RecipeBase):
+class RecipeScrapperCreate(RecipeBase):
     pass
 
 
-class Recipe(RecipeBase):
-    id: int
+class RecipeCreate(RecipeBase):
     foodtype: Optional[FoodTypeEnum] = None
-    observations: Optional[str] = None
-    nonix_rating: Optional[int] = None
-    reinus_rating: Optional[int] = None
     already_cooked: bool
+    thermomix_recipe: bool
     is_vegetarian: Optional[bool] = None
+
+
+class Recipe(RecipeBase, RecipeCreate):
+    id: int
 
     class Config:
         # Read data from dict and class attributes (.whatever)
